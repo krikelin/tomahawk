@@ -359,8 +359,10 @@ SourceTreeView::copyPlaylistLink()
     {
 
         // Disable toma.hk playlist mode until ready
-        // GlobalActionManager::instance()->getShortLink( playlist );
-
+       PlaylistItem* item = itemFromIndex< PlaylistItem >( m_contextMenuIndex );
+       playlist_ptr playlist = item->playlist();
+       GlobalActionManager::instance()->getShortLink( playlist );
+/*
        PlaylistItem* item = itemFromIndex< PlaylistItem >( m_contextMenuIndex );
        playlist_ptr playlist = item->playlist();
 
@@ -372,7 +374,7 @@ SourceTreeView::copyPlaylistLink()
            QFileInfo playlistAbsoluteFilePath = filename;
            TomahawkSettings::instance()->setPlaylistDefaultPath( playlistAbsoluteFilePath.absolutePath() );
            GlobalActionManager::instance()->savePlaylistToFile( playlist, filename );
-       }
+       } */
     }
 }
 

@@ -1217,7 +1217,7 @@ GlobalActionManager::waitingForResolved( bool /* success */ )
 QString
 GlobalActionManager::hostname() const
 {
-    return QString( "http://toma.hk" );
+    return QString( "http://stage.toma.hk" );
 }
 
 

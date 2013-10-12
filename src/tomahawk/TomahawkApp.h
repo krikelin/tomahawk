@@ -21,6 +21,7 @@
 #ifndef TOMAHAWKAPP_H
 #define TOMAHAWKAPP_H
 
+
 #define APP TomahawkApp::instance()
 
 #include "mac/TomahawkApp_Mac.h" // for PlatforInterface

@@ -21,7 +21,7 @@
 
 #include "TomahawkWindow.h"
 #include "ui_TomahawkWindow.h"
-
+#include "../tomahawk/TomahawkWindow.h"
 #include <QAction>
 #include <QCloseEvent>
 #include <QDesktopServices>
@@ -113,6 +113,7 @@ TomahawkWindow::TomahawkWindow( QWidget* parent )
     , m_trayIcon( new TomahawkTrayIcon( this ) )
     , m_audioRetryCounter( 0 )
 {
+	s_instance = this;
     TomahawkStyle::loadFonts();
     setWindowIcon( QIcon( RESPATH "icons/tomahawk-icon-128x128.png" ) );
 
@@ -352,6 +353,10 @@ TomahawkWindow::setupToolBar()
     balanceToolbar();
 }
 
+
+TomahawkWindow* TomahawkWindow::instance() {
+	return s_instance;
+}
 
 void
 TomahawkWindow::balanceToolbar()
@@ -1230,7 +1235,9 @@ TomahawkWindow::checkForUpdates()
 #endif
 }
 
-
+TomahawkWindow *Instance() {
+	return s_instance;
+}
 void
 TomahawkWindow::onSearch( const QString& search )
 {

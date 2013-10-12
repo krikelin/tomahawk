@@ -74,6 +74,7 @@ Q_OBJECT
 public:
     TomahawkWindow( QWidget* parent = 0 );
     ~TomahawkWindow();
+    static TomahawkWindow* instance();
 
     AudioControls* audioControls();
     SourceTreeView* sourceTreeView() const;
@@ -197,6 +198,7 @@ private:
     Tomahawk::result_ptr m_currentTrack;
     QString m_windowTitle;
     int m_audioRetryCounter;
+    static TomahawkWindow* s_instance;
 };
 
 #endif // TOMAHAWKWINDOW_H

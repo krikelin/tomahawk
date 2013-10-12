@@ -28,6 +28,7 @@
 #include "Album.h"
 #include "Artist.h"
 #include "Track.h"
+#include <Qt>
 #include "collection/Collection.h"
 #include "infosystem/InfoSystem.h"
 #include "infosystem/InfoSystemCache.h"
@@ -717,10 +718,16 @@ TomahawkApp::activate()
 
 
 bool
-TomahawkApp::loadUrl( const QString& url )
+TomahawkApp::loadUrl( const QString& inputUrl )
 {
+	QString url = inputUrl;
+	if(!inputUrl.contains("//")) {
+		url = url.replace("tomahawk:", "tomahawk://", Qt::CaseSensitive);
+		url = url.replace(":", "/", Qt::CaseSensitive)	;
+	}
     QFile f( url );
     QFileInfo info( f );
+
     if ( info.suffix() == "xspf" )
     {
         XSPFLoader* l = new XSPFLoader( true, this );

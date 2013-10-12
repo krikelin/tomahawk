@@ -29,6 +29,7 @@
 
 //template <typename T> class QSharedPointer;
 
+
 #include <QNetworkReply>
 
 // TODO: Move into Tomahawk namespace
@@ -49,6 +50,7 @@ namespace Tomahawk
     class Query;
     class Result;
     class Track;
+    class WebApp;
     class TrackData;
     class Source;
     class DynamicControl;
@@ -67,6 +69,8 @@ namespace Tomahawk
     typedef QSharedPointer<Result> result_ptr;
     typedef QWeakPointer<Result> result_wptr;
     typedef QSharedPointer<Track> track_ptr;
+    typedef QWeakPointer<WebApp> app_wptr;
+    typedef QSharedPointer<WebApp> app_ptr;
     typedef QWeakPointer<Track> track_wptr;
     typedef QSharedPointer<TrackData> trackdata_ptr;
     typedef QWeakPointer<TrackData> trackdata_wptr;

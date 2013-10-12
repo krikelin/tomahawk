@@ -136,6 +136,15 @@ ViewManager::~ViewManager()
 }
 
 
+WebAppWidget* ViewManager::createPageForApp(const app_ptr& app) {
+
+
+    WebAppWidget* view = new WebAppWidget();
+    view->setApp(app);
+    view->setDetailedView();
+    return view;
+}
+
 FlexibleView*
 ViewManager::createPageForPlaylist( const playlist_ptr& playlist )
 {
@@ -195,6 +204,22 @@ ViewManager::playlistForPage( ViewPage* page ) const
 }
 
 
+Tomahawk::ViewPage* ViewManager::show( const Tomahawk::app_ptr& app) {
+	if(!app->loaded()) {
+
+	}
+    WebAppWidget* view;
+    if( !m_appViews.contains( app ) || m_appViews.value(app).isNull()) {
+        view = createPageForApp(app);
+        m_appViews.insert(app, view);
+    }
+    else
+    {
+        view = m_appViews.value( app ).data();
+    }
+    setPage(view);
+}
+
 Tomahawk::ViewPage*
 ViewManager::show( const Tomahawk::playlist_ptr& playlist )
 {
@@ -237,6 +262,7 @@ ViewManager::show( const Tomahawk::dynplaylist_ptr& playlist )
 
     return m_dynamicWidgets.value( playlist ).data();
 }
+
 
 
 Tomahawk::ViewPage*

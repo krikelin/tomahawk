@@ -26,9 +26,9 @@
 #include "Query.h"
 #include "utils/DpiScaler.h"
 
-#include <QWidget>
-#include <QTimer>
-#include <QTimeLine>
+#include <Qwidget>
+#include <qtimer>
+#include <qtimeLine>
 
 class QDropEvent;
 class QDragEnterEvent;

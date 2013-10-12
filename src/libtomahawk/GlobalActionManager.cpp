@@ -32,6 +32,7 @@
 #include "resolvers/ScriptCommand_LookupUrl.h"
 #include "utils/JspfLoader.h"
 #include "utils/Logger.h"
+#include "../tomahawk/TomahawkWindow.h"
 #include "utils/NetworkAccessManager.h"
 #include "utils/RdioParser.h"
 #include "utils/ShortenedLinkParser.h"
@@ -139,8 +140,24 @@ GlobalActionManager::openLink( const QString& title, const QString& artist, cons
 
 
 bool
-GlobalActionManager::openUrl( const QString& url )
+GlobalActionManager::openUrl( const QString& uri )
 {
+	// Emulating Spotify's URI system
+	QString url = uri;
+	if(url.startsWith("tomahawk://internal/")) {
+		QString appUri = url.left(QString("tomahawk://internal/").length() + 1);
+		QStringList args = appUri.split("/");
+		QString app = appUri.at(0);
+		if(app.contains("search")) {
+	//		ViewManager::instance()->show( new SearchWidget("", TomahawkWindow::instance()));
+			return true;
+		}
+		if(app.contains("queue")) {
+		//	ViewManager::instance()->show( new TopTracksPage("", TomahawkWindow::Instance()));
+			return true;
+		}
+		return false;
+	}
     // Native Implementations
     if ( url.startsWith( "tomahawk://" ) )
         return parseTomahawkLink( url );

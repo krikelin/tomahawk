@@ -30,7 +30,8 @@
 #include <QObject>
 #include <QHash>
 #include <QStackedWidget>
-
+#include "WebApp.h"
+#include "WebAppWidget.h"
 // best regards to you, mr. pimple aka xhochy :)
 #include <boost/function.hpp>
 
@@ -42,6 +43,7 @@ class GridView;
 class AlbumInfoWidget;
 class ArtistInfoWidget;
 class TreeWidget;
+class WebAppWidget;
 class CollectionModel;
 class ContextWidget;
 class FlexibleView;
@@ -113,7 +115,7 @@ public:
     // only use this is you need to create a playlist and show it directly and want it to be
     // linked to the sidebar. call it right after creating the playlist
     FlexibleView* createPageForPlaylist( const Tomahawk::playlist_ptr& playlist );
-
+    WebAppWidget* createPageForApp(const Tomahawk::app_ptr& app);
     FlexibleView* createPageForList( const QString& title, const QList< Tomahawk::query_ptr >& queries );
 
     void addDynamicPage( Tomahawk::ViewPagePlugin* viewPage, const QString& pageName = QString() );
@@ -157,7 +159,7 @@ public slots:
     Tomahawk::ViewPage* show( const Tomahawk::query_ptr& query );
     Tomahawk::ViewPage* show( const Tomahawk::collection_ptr& collection );
     Tomahawk::ViewPage* show( const Tomahawk::source_ptr& source );
-
+    Tomahawk::ViewPage* show( const Tomahawk::app_ptr& app );
     void historyBack();
     void historyForward();
 
@@ -202,7 +204,6 @@ private:
     QHash< QString, Tomahawk::ViewPage* > m_dynamicPages;
     QHash< QString, QPointer< Tomahawk::ViewPagePlugin > > m_dynamicPagePlugins;
     QHash< QString, boost::function< Tomahawk::ViewPage*() > > m_dynamicPagesInstanceLoaders;
-
     QList< Tomahawk::collection_ptr > m_superCollections;
 
     QHash< Tomahawk::dynplaylist_ptr, QPointer<Tomahawk::DynamicWidget> > m_dynamicWidgets;
@@ -212,7 +213,7 @@ private:
     QHash< Tomahawk::query_ptr, QPointer<TrackInfoWidget> > m_trackViews;
     QHash< Tomahawk::playlist_ptr, QPointer<FlexibleView> > m_playlistViews;
     QHash< Tomahawk::source_ptr, QPointer<SourceInfoWidget> > m_sourceViews;
-
+    QHash< Tomahawk::app_ptr, QPointer<WebAppWidget> > m_appViews;
     QList<Tomahawk::ViewPage*> m_pageHistoryBack;
     QList<Tomahawk::ViewPage*> m_pageHistoryFwd;
     Tomahawk::ViewPage* m_currentPage;

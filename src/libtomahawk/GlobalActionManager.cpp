@@ -23,6 +23,7 @@
 #include "GlobalActionManager.h"
 
 #include "audio/AudioEngine.h"
+#include "../libtomahawk/widgets/WebAppWidget.h"
 #include "database/LocalCollection.h"
 #include "echonest/Playlist.h"
 #include "playlist/dynamic/GeneratorInterface.h"
@@ -41,7 +42,7 @@
 #include "utils/XspfLoader.h"
 #include "utils/XspfGenerator.h"
 #include "widgets/SearchWidget.h"
-
+#include "widgets/HistoryWidget.h"
 #include "Album.h"
 #include "Artist.h"
 #include "Pipeline.h"
@@ -49,7 +50,6 @@
 #include "SourceList.h"
 #include "TomahawkSettings.h"
 #include "ViewManager.h"
-
 #include <qjson/parser.h>
 #include <qjson/serializer.h>
 
@@ -137,10 +137,30 @@ GlobalActionManager::openLink( const QString& title, const QString& artist, cons
     return link;
 }
 
-
 bool
-GlobalActionManager::openUrl( const QString& url )
+GlobalActionManager::openUrl( const QString& uri )
 {
+    // Emulating Spotify's URI system
+    QString url = uri;
+    qDebug() << url;
+    if(url.startsWith("tomahawk://internal/")) {
+        QString appUri = url.right(url.length() - 20);
+        tDebug(LOGINFO) << appUri;
+        QStringList args = appUri.split("/");
+        QString app = args.at(0);
+        tDebug(LOGINFO) << app;
+        if(app.contains("toplist")) {
+            return ViewManager::instance()->show( new WhatsHotWidget(window_instance()));
+        }
+        if(app.contains("app")) {
+            return ViewManager::instance()->show(new WebAppWidget(window_instance()));
+        }
+        if(app.contains("queue")) {
+       //     ViewManager::instance()->show( new TopTracksPage("", TomahawkWindow::Instance()));
+            return true;
+        }
+        return false;
+    }
     // Native Implementations
     if ( url.startsWith( "tomahawk://" ) )
         return parseTomahawkLink( url );

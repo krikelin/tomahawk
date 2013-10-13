@@ -19,11 +19,12 @@
 
 #ifndef GLOBALACTIONMANAGER_H
 #define GLOBALACTIONMANAGER_H
+#include "../tomahawk/TomahawkWindow.h"
 
 #include "Playlist.h"
 #include "playlist/dynamic/DynamicPlaylist.h"
 #include "DllMacro.h"
-
+#include "widgets/WhatsHotWidget.h"
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QObject>

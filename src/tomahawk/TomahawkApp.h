@@ -3,6 +3,7 @@
  *   Copyright 2010-2011, Christian Muehlhaeuser <muesli@tomahawk-player.org>
  *   Copyright 2010-2011, Leo Franchi <lfranchi@kde.org>
  *   Copyright 2010-2011, Jeff Mitchell <jeff@tomahawk-player.org>
+ *   Copyright 2014,      Teo Mrnjavac <teo@kde.org>
  *
  *   Tomahawk is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -45,6 +46,7 @@ class Servent;
 class SipHandler;
 class TomahawkSettings;
 class AudioControls;
+class SplashWidget;
 
 namespace Tomahawk
 {
@@ -114,6 +116,14 @@ private slots:
     void spotifyApiCheckFinished();
     void onInfoSystemReady();
 
+    void onSchemaUpdateStarted();
+    void onSchemaUpdateStatus( const QString& status );
+    void onSchemaUpdateDone();
+
+    void startSplashWidget( const QString& initialMessage = QString() );
+    void updateSplashWidgetMessage( const QString& message );
+    void killSplashWidget();
+
     void ipDetectionFailed( QNetworkReply::NetworkError error, QString errorString );
 
 private:
@@ -144,6 +154,8 @@ private:
     TomahawkWindow* m_mainwindow;
 #endif
     QPointer<PlaydarApi> playdarApi;
+
+    SplashWidget* m_splashWidget;
 
     bool m_headless;
 };

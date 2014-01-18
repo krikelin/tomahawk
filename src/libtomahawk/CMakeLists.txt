@@ -159,6 +159,7 @@ set( libGuiSources
     widgets/RecentPlaylistsModel.cpp
     widgets/RecentlyPlayedPlaylistsModel.cpp
     widgets/ScriptCollectionHeader.cpp
+    widgets/ScrollingLabel.cpp
     widgets/SearchWidget.cpp
     widgets/SeekSlider.cpp
     widgets/SourceTreePopupDialog.cpp
@@ -398,7 +399,6 @@ set( libUI ${libUI}
     widgets/infowidgets/AlbumInfoWidget.ui
     widgets/infowidgets/TrackInfoWidget.ui
     playlist/QueueView.ui
-    playlist/ColumnViewPreviewWidget.ui
     filemetadata/MetadataEditor.ui
     context/ContextWidget.ui
     infobar/InfoBar.ui
@@ -430,7 +430,7 @@ ENDIF(QCA2_FOUND)
 IF(LIBATTICA_FOUND)
     SET( libGuiSources ${libGuiSources} AtticaManager.cpp )
     INCLUDE_DIRECTORIES( ${LIBATTICA_INCLUDE_DIR} )
-    LIST(APPEND LINK_LIBRARIES ${LIBATTICA_LIBRARIES} ${QuaZip_LIBRARIES} )
+    LIST(APPEND LINK_LIBRARIES ${LIBATTICA_LIBRARIES} ${LibAttica_LIBRARIES} ${QuaZip_LIBRARIES} )
 ENDIF(LIBATTICA_FOUND)
 
 IF( WIN32 )

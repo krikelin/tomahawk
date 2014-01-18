@@ -3,7 +3,7 @@
  *   Copyright 2010-2011, Christian Muehlhaeuser <muesli@tomahawk-player.org>
  *   Copyright 2010-2011, Leo Franchi <lfranchi@kde.org>
  *   Copyright 2010-2012, Jeff Mitchell <jeff@tomahawk-player.org>
- *   Copyright 2013,      Teo Mrnjavac <teo@kde.org>
+ *   Copyright 2013-2014, Teo Mrnjavac <teo@kde.org>
  *
  *   Tomahawk is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -69,6 +69,7 @@
 #include "utils/Logger.h"
 #include "utils/TomahawkUtilsGui.h"
 #include "utils/TomahawkCache.h"
+#include "widgets/SplashWidget.h"
 
 #ifndef ENABLE_HEADLESS
     #include "resolvers/JSResolver.h"
@@ -76,7 +77,7 @@
     #include "utils/SpotifyParser.h"
     #include "AtticaManager.h"
     #include "TomahawkWindow.h"
-    #include "SettingsDialog.h"
+    #include "dialogs/SettingsDialog.h"
     #include "ActionCollection.h"
     #include "widgets/HeaderLabel.h"
     #include "TomahawkSettingsGui.h"
@@ -148,6 +149,7 @@ TomahawkApp::TomahawkApp( int& argc, char *argv[] )
     , m_mainwindow( 0 )
 #endif
     , m_headless( false )
+    , m_splashWidget( 0 )
 {
     if ( arguments().contains( "--help" ) || arguments().contains( "-h" ) )
     {
@@ -180,6 +182,12 @@ TomahawkApp::init()
     m_headless = arguments().contains( "--headless" );
     setWindowIcon( QIcon( RESPATH "icons/tomahawk-icon-128x128.png" ) );
     setQuitOnLastWindowClosed( false );
+
+    if ( arguments().contains( "--splash" ) )
+    {
+        startSplashWidget( "Splash screen test\n" );
+        updateSplashWidgetMessage( "Splash screen test\n2/7" );
+    }
 
     QFont f = font();
 #ifdef Q_OS_MAC
@@ -472,6 +480,8 @@ TomahawkApp::initDatabase()
 
     tDebug( LOGEXTRA ) << "Using database:" << dbpath;
     m_database = QPointer<Tomahawk::Database>( new Tomahawk::Database( dbpath, this ) );
+    // this also connects dbImpl schema update signals
+
     Pipeline::instance()->databaseReady();
 }
 
@@ -683,6 +693,60 @@ TomahawkApp::onInfoSystemReady()
 
 
 void
+TomahawkApp::onSchemaUpdateStarted()
+{
+    startSplashWidget( tr( "Updating database\n") );
+}
+
+
+void
+TomahawkApp::onSchemaUpdateStatus( const QString& status )
+{
+    updateSplashWidgetMessage( tr("Updating database\n%1" ).arg( status ) );
+}
+
+
+void
+TomahawkApp::onSchemaUpdateDone()
+{
+    killSplashWidget();
+}
+
+
+void
+TomahawkApp::startSplashWidget( const QString& initialMessage )
+{
+    tDebug() << Q_FUNC_INFO;
+    m_splashWidget = new SplashWidget();
+    m_splashWidget->showMessage( initialMessage );
+    m_splashWidget->show();
+}
+
+
+void
+TomahawkApp::updateSplashWidgetMessage( const QString& message )
+{
+    if ( m_splashWidget )
+    {
+        m_splashWidget->showMessage( message );
+    }
+}
+
+
+void
+TomahawkApp::killSplashWidget()
+{
+    tDebug() << Q_FUNC_INFO;
+    if ( m_splashWidget )
+    {
+        m_splashWidget->finish( mainWindow() );
+        m_splashWidget->deleteLater();
+    }
+    m_splashWidget = 0;
+}
+
+
+void
 TomahawkApp::ipDetectionFailed( QNetworkReply::NetworkError error, QString errorString )
 {
     Q_UNUSED( error );
@@ -719,23 +783,26 @@ TomahawkApp::activate()
 bool
 TomahawkApp::loadUrl( const QString& url )
 {
-    QFile f( url );
-    QFileInfo info( f );
-    if ( info.suffix() == "xspf" )
+    if ( !url.startsWith( "tomahawk://" ) )
     {
-        XSPFLoader* l = new XSPFLoader( true, this );
-        tDebug( LOGINFO ) << "Loading spiff:" << url;
-        l->load( QUrl::fromUserInput( url ) );
+        QFile f( url );
+        QFileInfo info( f );
+        if ( info.suffix() == "xspf" )
+        {
+            XSPFLoader* l = new XSPFLoader( true, this );
+            tDebug( LOGINFO ) << "Loading spiff:" << url;
+            l->load( QUrl::fromUserInput( url ) );
 
-        return true;
-    }
-    else if ( info.suffix() == "jspf" )
-    {
-        JSPFLoader* l = new JSPFLoader( true, this );
-        tDebug( LOGINFO ) << "Loading j-spiff:" << url;
-        l->load( QUrl::fromUserInput( url ) );
+            return true;
+        }
+        else if ( info.suffix() == "jspf" )
+        {
+            JSPFLoader* l = new JSPFLoader( true, this );
+            tDebug( LOGINFO ) << "Loading j-spiff:" << url;
+            l->load( QUrl::fromUserInput( url ) );
 
-        return true;
+            return true;
+        }
     }
 
     return GlobalActionManager::instance()->openUrl( url );

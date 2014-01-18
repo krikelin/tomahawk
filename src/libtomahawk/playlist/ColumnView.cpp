@@ -1,6 +1,7 @@
 /* === This file is part of Tomahawk Player - <http://tomahawk-player.org> ===
  *
  *   Copyright 2010-2013, Christian Muehlhaeuser <muesli@tomahawk-player.org>
+ *   Copyright 2014,      Teo Mrnjavac <teo@kde.org>
  *
  *   Tomahawk is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -154,7 +155,8 @@ ColumnView::setTreeModel( TreeModel* model )
     sortByColumn( PlayableModel::Artist, Qt::AscendingOrder );*/
 
     QList< int > widths;
-    widths << m_previewWidget->minimumSize().width() + 32;
+    int baseUnit = m_previewWidget->minimumSize().width() + 32;
+    widths << baseUnit << baseUnit << baseUnit << baseUnit;
     setColumnWidths( widths );
 }
 
@@ -456,16 +458,6 @@ ColumnView::guid() const
 
 
 void
-ColumnView::onScrollBarChanged( int value )
-{
-    QWidget* parent = qobject_cast< QWidget* >( m_previewWidget->parent() );
-    parent->scroll( 0, m_scrollDelta - value );
-
-    m_scrollDelta = value;
-}
-
-
-void
 ColumnView::fixScrollBars()
 {
     foreach ( QObject* widget, children() )
@@ -486,7 +478,6 @@ ColumnView::fixScrollBars()
                     if ( sb && sb->orientation() == Qt::Vertical )
                     {
                         sb->setSingleStep( 6 );
-                        connect( sb, SIGNAL( valueChanged( int ) ), SLOT( onScrollBarChanged( int ) ), Qt::UniqueConnection );
 
                         break;
                     }

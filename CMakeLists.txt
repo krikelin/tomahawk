@@ -2,6 +2,15 @@ PROJECT( tomahawk )
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.6 )
 SET( CMAKE_MODULE_PATH  "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules" )
 CMAKE_POLICY(SET CMP0017 NEW)
+
+IF ( CMAKE_VERSION VERSION_EQUAL 2.8.12 OR CMAKE_VERSION VERSION_GREATER 2.8.12 )
+CMAKE_POLICY(SET CMP0022 NEW)
+
+# TODO:
+# Update to NEW and fix things up when we can depend on 2.8.12
+CMAKE_POLICY(SET CMP0023 OLD)
+ENDIF()
+
 INCLUDE(CMakeDependentOption)
 
 ###
@@ -239,7 +248,12 @@ macro_log_feature(Boost_FOUND "Boost" "Provides free peer-reviewed portable C++ 
 macro_optional_find_package(QCA2)
 macro_log_feature(QCA2_FOUND "QCA2" "Provides encryption and signing functions necessary for some resolvers and accounts" "http://delta.affinix.com/qca/" TRUE "" "")
 
-macro_optional_find_package(LibAttica 0.4.0)
+if( TOMAHAWK_QT5 )
+    macro_optional_find_package(KF5Attica 1.0.0)
+    set(LIBATTICA_FOUND ${KF5Attica_FOUND})
+else()
+    macro_optional_find_package(LibAttica 0.4.0)
+endif()
 macro_log_feature(LIBATTICA_FOUND "libattica" "Provides support for installation of resolvers from the Tomahawk website" "https://projects.kde.org/projects/kdesupport/attica" TRUE "" "")
 
 macro_optional_find_package(QuaZip)
@@ -257,8 +271,14 @@ macro_log_feature(QTWEETLIB_FOUND "QTweetLib" "Qt Twitter Library" "https://gith
 macro_optional_find_package(LibLastFm 1.0.0)
 macro_log_feature(LIBLASTFM_FOUND "liblastfm" "Qt library for the Last.fm webservices" "https://github.com/lastfm/liblastfm" TRUE "" "liblastfm is needed for scrobbling tracks to Last.fm and fetching cover artwork")
 
-macro_optional_find_package(QtKeychain 0.1.0)
+if( NOT APPLE )
+if( TOMAHAWK_QT5 )
+    macro_optional_find_package(Qt5Keychain 0.1.0)
+else()
+    macro_optional_find_package(QtKeychain 0.1.0)
+endif()
 macro_log_feature(QTKEYCHAIN_FOUND "QtKeychain" "Provides support for secure credentials storage" "https://github.com/frankosterfeld/qtkeychain" TRUE "" "")
+endif()
 
 if( UNIX AND NOT APPLE )
     macro_optional_find_package(TelepathyQt 0.9.3)

@@ -311,11 +311,11 @@ ViewManager::show( const Tomahawk::collection_ptr& collection )
 
         view->setTreeModel( model );
 
-        if ( !collection.isNull() )
-            view->setEmptyTip( collection->emptyText() );
-
         model->addCollection( collection );
         setPage( view );
+
+        if ( !collection.isNull() )
+            view->setEmptyTip( collection->emptyText() );
 
         m_collectionViews.insert( collection, view );
     }
@@ -323,6 +323,7 @@ ViewManager::show( const Tomahawk::collection_ptr& collection )
     {
         view = m_collectionViews.value( collection ).data();
     }
+    view->restoreViewMode();
 
     setPage( view );
     return view;

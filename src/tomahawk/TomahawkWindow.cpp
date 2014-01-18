@@ -1221,11 +1221,8 @@ TomahawkWindow::checkForUpdates()
 void
 TomahawkWindow::onSearch( const QString& search )
 {
-	qDebug() << "at";
-
 	if ( !search.trimmed().isEmpty() ) {
-		if(search.startsWith("tomahawk:")) {
-			qDebug() << "Search induced";
+		if( search.startsWith( "tomahawk:" ) ) {
 			APP->loadUrl(search);
 		} else {
 			ViewManager::instance()->show( new SearchWidget( search, this ) );
